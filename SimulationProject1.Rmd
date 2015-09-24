@@ -1,0 +1,68 @@
+---
+title: "Exponential Distribution vs. Central Limit Theorem"
+author: "Ben Daniel"
+date: "September 18, 2015"
+output: pdf_document
+---
+#Overview
+This assignment will compare the exponential distribution and the distribution of averages under the central limit theorem. While different probability mass distrubutions can take on different shapes and variances, the averages and the variance of their averages show a central tendency with a Gaussian distribution pattern.  The following example will compare variation from the exponential distriubtion, and then it will compare the variation of averages from the exponential distribution.
+
+#Simulation of Exponential Distribution
+The code below will simulate 40000 random draws from the exponential distribution and plot the draws in a histogram.
+```{r Exponential Distribution, echo=TRUE}
+#set seed at 100 for reporudcibility
+set.seed(100)
+#number of simulations is 1000
+nosim <-1000
+#number of draws is 40
+n <- 40
+#lambad is set to be .2
+lambda <- .2
+#examine the histogram of the expontential distribution with lambda .2
+hist(rexp(n*nosim,lambda), main="Exponential Distribution Histogram",xlab="outcome",breaks=10)
+
+```
+The mean of the exponential distibution is 1/lamda, and indeed mean(rexp(n*nosim,lambda)) = 5.01.  If you look at the histogram, the tallest bar is between 0 and 5, which 1/labmda of .2 comes out to be approximately 5.
+
+#Simuatlion with the Central Limit Theorem
+Now, lets look at the distribution when we use the Central Limit Theorem.
+
+```{r, echo=TRUE}
+#build the matrix n number of draws from the distribution and put it in a 1000 row maxtrix
+rexp_matrix<-matrix(rexp(n*nosim,lambda),nosim)
+#the apply function will be used to take the mean of each row and put it into its own matrix
+mean_rexp_matrix<-apply(rexp_matrix,1,mean)
+#call hist to plot the means of each row
+hist(mean_rexp_matrix, main="Means of Exponential Distribution Histogram", xlab="expected outcome")
+```
+
+Comparing the theoretical and sample means, we can see that the sample mean is a good approximation for the theoretical mean.
+The sample mean: 
+```{r, echo=TRUE}
+mean(mean_rexp_matrix)
+```
+The theoretical mean:
+```{r, echo=TRUE}
+1/lambda
+```
+
+The two are nearly equal.
+
+The same can be done for the sample variance:
+```{r, echo=TRUE}
+var(rexp(n*nosim,lambda))
+```
+and the theoretical variance.  The standard deviation for the exponential distribution is 1/lambda.  If this value is squared, the variance of my simulation shown above nearly equals the theoretical variance.
+```{r, echo=TRUE}
+1/lambda^2
+```
+#Average of Exponential Distribution is Approximately Normal
+We can tell the average of the exponential distribution is approximately normal.  First, the expected value at the center of the distribution is a good estimator of the theoretical average (5 or 1/lamda). In other words, the sample average is centered around the population average.  Lets look at the variance and standard deviation of the averages.
+```{r, echo=TRUE}
+hdr<-c("variance","sd")
+xdr<-c(var(mean_rexp_matrix),sd(mean_rexp_matrix))
+ydr<-rbind(hdr,xdr)
+ydr
+```
+The standard deviation is approximately .76.  Hence the deviation is centered around what we are estimating.
+
